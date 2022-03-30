@@ -11,46 +11,32 @@ export default function App() {
   const buttons = [['7', '8', '9', 'AC'], ['4','5','6', 'DEL'], [1,2,3, '='], ['', 0, '.', '=']];
 
   const [currentNumber, setCurrentNumber] = useState("");
-  const [calculation, setCalculation] = useState([]);
+  const [lastCalculation, setCalculation] = useState([]);
 
   function ResetCalculation(){
     setCurrentNumber("");
     setCalculation([]);
-    return
+
   }
 
   function DeleteLastNumber(){
     let NewCurrentNumber = currentNumber.substring(0, currentNumber.length - 1);
 
-    
     setCurrentNumber(NewCurrentNumber);
-    
-    return
+
   }
 
   async function Calc(){
-    let charactersArray = currentNumber.split('');
-    let characterAfterOperator = currentNumber + "?";
+    try{
+      let result = Function('return ' + currentNumber)();
+      setCalculation(currentNumber); 
+      setCurrentNumber(result);
 
-    console.log(characterAfterOperator)
-    charactersArray.map((character, index)=>{
-      
-      if(operators.includes(character)){
-        
-        let characterBeforeOperator = characterAfterOperator.substring(0, index );   
-        characterAfterOperator.replace(characterBeforeOperator, ''); 
-        console.log(characterBeforeOperator)
-        
-        setCalculation([...calculation, characterBeforeOperator, character ])
-      }else
-      if(character == "?"){
-        console.log(characterAfterOperator)
-        let characterBeforeOperator = characterAfterOperator.substring(0, index ); 
-        setCalculation([...calculation, characterBeforeOperator]);
-      }
-    })
-    
-    console.log(calculation)
+    }catch{
+      setCurrentNumber("error");
+      setTimeout(()=>{ setCurrentNumber(""); }, 1000)
+    }
+     
   }
 
   const functionsObject = {
@@ -89,6 +75,7 @@ export default function App() {
       <StatusBar style="light" />
       <View style={styles.result}>
         <ScrollView contentContainerStyle={styles.resultScroll} showsHorizontalScrollIndicator={false} horizontal={true}> 
+          <Text style={styles.lastCalculation}> {lastCalculation} </Text>
           <Text style={styles.resultText}> {currentNumber} </Text>
         </ScrollView>
       </View>
@@ -148,7 +135,12 @@ const styles = StyleSheet.create({
   resultScroll:{
     flex: 1,
     justifyContent: 'flex-end',
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
+    flexDirection: 'column'
+  },
+  lastCalculation:{
+    color: '#ffffffaa',
+    fontSize: 40
   },
   resultText:{
     color: '#ffffff',
