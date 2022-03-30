@@ -13,59 +13,117 @@ export default function App() {
   const [currentNumber, setCurrentNumber] = useState("");
   const [calculation, setCalculation] = useState([]);
 
-  function setNumber(buttonPressed){
-  
-    operators.map((operator)=>{
+  function ResetCalculation(){
+    setCurrentNumber("");
+    setCalculation([]);
+    return
+  }
+
+  function DeleteLastNumber(){
+    let NewCurrentNumber = currentNumber.substring(0, currentNumber.length - 1);
+
+    
+    setCurrentNumber(NewCurrentNumber);
+    
+    return
+  }
+
+  async function Calc(){
+    let charactersArray = currentNumber.split('');
+    let characterAfterOperator = currentNumber + "?";
+
+    console.log(characterAfterOperator)
+    charactersArray.map((character, index)=>{
+      
+      if(operators.includes(character)){
+        
+        let characterBeforeOperator = characterAfterOperator.substring(0, index );   
+        characterAfterOperator.replace(characterBeforeOperator, ''); 
+        console.log(characterBeforeOperator)
+        
+        setCalculation([...calculation, characterBeforeOperator, character ])
+      }else
+      if(character == "?"){
+        console.log(characterAfterOperator)
+        let characterBeforeOperator = characterAfterOperator.substring(0, index ); 
+        setCalculation([...calculation, characterBeforeOperator]);
+      }
+    })
+    
+    console.log(calculation)
+  }
+
+  const functionsObject = {
+    'AC': ResetCalculation,
+    'DEL': DeleteLastNumber,
+    '=': Calc
+
+  }
+
+  function handleClickButton(buttonPressed){
+
+
+    try{
+      functionsObject[buttonPressed]();
+      
+      return
+    }catch{
+      
+      operators.map((operator)=>{
         if(operator == buttonPressed){
-          
-          setCalculation([...calculation, currentNumber, buttonPressed]);
-          setCurrentNumber("");
+          setCurrentNumber(currentNumber + buttonPressed);
           return
         }
+      setCurrentNumber(currentNumber + buttonPressed);
+      
     })
 
-    setCurrentNumber(currentNumber + buttonPressed);
-    console.log(calculation)
+    
+    }
+
+    
   }
 
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
       <View style={styles.result}>
-        <Text> {currentNumber} </Text>
+        <ScrollView contentContainerStyle={styles.resultScroll} showsHorizontalScrollIndicator={false} horizontal={true}> 
+          <Text style={styles.resultText}> {currentNumber} </Text>
+        </ScrollView>
       </View>
       <View style={styles.buttonsContainer}>
           <View style={styles.operatorsContainer}>
             <ScrollView style={styles.scrollOperators} showsHorizontalScrollIndicator={false} horizontal={true}> 
               
             {operators.map((button)=>{
-              return(<ButtonsOperators setNumber={setNumber} key={button} title={button} />)
+              return(<ButtonsOperators handleClickButton={handleClickButton} key={button} title={button} />)
             })}
             
             </ScrollView>
           </View>
           <View style={styles.buttonsList}>
             {buttons[0].map((button)=>{
-              return(<ButtonNumber key={button}  setNumber={setNumber} title={button} />)
+              return(<ButtonNumber key={button}  handleClickButton={handleClickButton} title={button} />)
             })}
 
           </View>
           <View style={styles.buttonsList}>
             {buttons[1].map((button)=>{
-              return(<ButtonNumber key={button}  setNumber={setNumber} title={button} />)
+              return(<ButtonNumber key={button}  handleClickButton={handleClickButton} title={button} />)
             })}
 
           </View>
           <View style={styles.buttonsList}>
             {buttons[2].map((button)=>{
 
-              return(<ButtonNumber key={button} setNumber={setNumber}  title={button} />)
+              return(<ButtonNumber key={button} handleClickButton={handleClickButton}  title={button} />)
             })}
             
           </View>
           <View style={styles.buttonsList}>
             {buttons[3].map((button)=>{
-              return(<ButtonNumber key={button} setNumber={setNumber} title={button} />)
+              return(<ButtonNumber key={button} handleClickButton={handleClickButton} title={button} />)
             })}
             <ButtonResult title={'='} />
           </View>
@@ -86,6 +144,15 @@ const styles = StyleSheet.create({
     flex: 3,
     width: '100%',
     backgroundColor: '#05254D'
+  },
+  resultScroll:{
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end'
+  },
+  resultText:{
+    color: '#ffffff',
+    fontSize: 90,
   },
   buttonsContainer:{
     flex: 5,

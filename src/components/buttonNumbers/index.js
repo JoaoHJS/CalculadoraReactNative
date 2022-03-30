@@ -6,7 +6,7 @@ export default function ButtonNumber(props){
     
 
     return(
-        <TouchableOpacity  onPress={()=>{props.setNumber(props.title)}} style={styles.buttonNumber} >
+        <TouchableOpacity  onPress={()=>{props.handleClickButton(props.title)}} style={styles.buttonNumber} >
             <Text style={styles.textButton}> {props.title != '=' ? props.title : ''} </Text>
         </TouchableOpacity>
     );

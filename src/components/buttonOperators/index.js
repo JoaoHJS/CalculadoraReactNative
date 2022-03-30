@@ -4,7 +4,7 @@ import {TouchableOpacity,Text, StyleSheet} from 'react-native';
 export default function ButtonsOperators(props){
     
     return(
-        <TouchableOpacity onPress={()=>{props.setNumber(props.title)}} style={styles.operatorButton}> 
+        <TouchableOpacity onPress={()=>{props.handleClickButton(props.title)}} style={styles.operatorButton}> 
             <Text style={styles.buttonText}> {props.title}</Text>
         </TouchableOpacity>
     );
